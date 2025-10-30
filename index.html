@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Undangan Pertunangan</title>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --accent: rgba(255,255,255,0.95);
+      --muted: rgba(255,255,255,0.85);
+    }
+
+    * { box-sizing: border-box; margin:0; padding:0; }
+    html, body {
+      height:100%;
+      width:100%;
+      font-family: "Poppins", sans-serif;
+      color: var(--accent);
+      background: #000;
+      overflow:hidden;
+    }
+
+    .invite-card {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background-image: url('cincin.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .invite-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.6) 80%);
+      z-index: 1;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .small-text {
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(15px);
+      animation: fadeInUp 1s ease forwards;
+    }
+
+    .names {
+      font-family: "Great Vibes", cursive;
+      font-size: 60px;
+      line-height: 1;
+      text-shadow: 0 6px 18px rgba(0,0,0,0.6);
+      margin-top: 8px;
+      opacity: 0;
+      transform: translateY(25px);
+      animation: fadeInUp 1.2s ease forwards;
+      animation-delay: 0.5s;
+    }
+
+    .to-line {
+      margin-top: 16px;
+      font-size: 16px;
+      color: rgba(255,255,255,0.95);
+      text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      opacity: 0;
+      transform: translateY(25px);
+      animation: fadeInUp 1.2s ease forwards;
+      animation-delay: 1s;
+    }
+
+    .btn-open {
+      margin-top: 22px;
+      border: 2px solid rgba(255,255,255,0.9);
+      background: transparent;
+      color: var(--accent);
+      padding: 14px 32px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform .12s ease, background .12s ease;
+      opacity: 0;
+      transform: translateY(25px);
+      animation: fadeInUp 1.2s ease forwards;
+      animation-delay: 1.5s;
+    }
+
+    .btn-open:hover {
+      transform: translateY(-3px);
+      background: rgba(255,255,255,0.06);
+    }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width:480px) {
+      .names { font-size: 48px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="invite-card">
+    <div class="content">
+      <div class="small-text">THE ENGAGEMENT OF</div> <br />
+      <div class="names">Kemy &amp; Ayu</div> <br />
+      <div class="to-line" id="tamu">Kepada Yth:<br><strong>Tamu Undangan</strong></div>
+      <button class="btn-open" id="openBtn">OPEN INVITATION</button>
+    </div>
+  </div>
+
+  <script>
+    async function loadTamu() {
+      const params = new URLSearchParams(window.location.search);
+      const i = params.get('i');
+      const tamuEl = document.getElementById('tamu');
+
+      if (!i) return;
+
+      try {
+        const res = await fetch('tamu.json');
+        const data = await res.json();
+        const tamu = data.find(item => item.id === i);
+
+        if (tamu) {
+          tamuEl.innerHTML = `Kepada Yth:<br><strong>${tamu.nama}</strong>`;
+        } else {
+          tamuEl.innerHTML = `Kepada Yth:<br><strong>Tamu Undangan</strong>`;
+        }
+      } catch (error) {
+        console.error('Gagal memuat daftar tamu:', error);
+      }
+    }
+
+    loadTamu();
+
+    // Arahkan ke undangan.html sambil bawa parameter ?i=
+    document.getElementById('openBtn').addEventListener('click', () => {
+      const params = new URLSearchParams(window.location.search);
+      const i = params.get('i');
+      const target = i ? `undangan.html?i=${i}` : 'undangan.html';
+      window.location.href = target;
+    });
+  </script>
+
+</body>
+</html>
